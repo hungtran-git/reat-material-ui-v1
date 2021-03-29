@@ -1,27 +1,26 @@
 import { AppBar, Toolbar, Grid, InputBase, IconButton, Badge, makeStyles} from '@material-ui/core'
 import { ChatBubbleOutline, PowerSettingsNew, NotificationsNone } from '@material-ui/icons'
 import SearchIcon from '@material-ui/icons/Search';
-const useStyles = makeStyles({
-    root:{
-        backgroundColor: '#fff'
-    },
-    searchInput:{
-        opacity: '0.6',
-        padding: '0px 8px',
-        fontSize: '0.8rem',
-        '&:hover':{
-            backgroundColor: '#f2f2f2',
-            '& .MuiSvgIcon-root':{
-                marginRight: '8px'
+
+const useStyles = makeStyles(theme => {
+    return (
+        {
+            root:{
+                backgroundColor: '#fff'
+            },
+            searchInput:{
+                opacity: '0.6',
+                padding: '0px 8px',
+                fontSize: '0.8rem',
+                '&:hover':{
+                    backgroundColor: '#f2f2f2',
+                    '& .MuiSvgIcon-root':{
+                        marginRight: theme.spacing(1)
+                    }
+                }
             }
         }
-    },
-    btnRoot:{
-        backgroundColor: 'green'
-    },
-    btnLabel:{
-        backgroundColor: 'red'
-    }
+    )
 });
 
 export default function Header() {
