@@ -1,10 +1,8 @@
 import {Grid} from '@material-ui/core';
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import { Form, useForm } from '../../components/useForm';
 import Controls from '../../components/controls/Controls';
 import * as employeeService from '../../services/employeeService';
-import { ErrorSharp } from '@material-ui/icons';
-
 const genderItems =[
     {id: 'male', title:'Male'},
     {id: 'female', title:'Female'},
@@ -42,14 +40,19 @@ export default function EmployeeForm() {
         values, 
         errors,
         setErrors,
-        resetForm,
         handleInputChange,
+        resetForm,
     } = useForm(initialValues, true, validate);
 
     const handleSubmit = (e)=>{
         e.preventDefault();
         if(validate())
-            window.alert('Testing...');
+        {
+            employeeService.insertEmployee(values);
+            resetForm();
+        }
+
+        console.log(employeeService.getAllEmployees());
     }
 
     return (

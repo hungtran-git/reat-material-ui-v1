@@ -14,7 +14,7 @@ export default function DatePicker(props) {
     const {name, label, value, onChange} = props;
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker disableToolBar variant="inline" inputVariant="outlined"
+            <KeyboardDatePicker disableToolbar variant="inline" inputVariant="outlined"
                 label={label}
                 name={name}
                 value={value}
