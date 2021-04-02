@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react'
 import { Form, useForm } from '../../components/useForm';
 import Controls from '../../components/controls/Controls';
 import * as employeeService from '../../services/employeeService';
+import { ErrorSharp } from '@material-ui/icons';
 
 const genderItems =[
     {id: 'male', title:'Male'},
@@ -23,27 +24,53 @@ const initialValues = {
 };
 
 export default function EmployeeForm() {
-    const {values, setValues, handleInputChange} = useForm(initialValues);
+    const {
+        values, 
+        setValues, 
+        errors,
+        setErrors,
+        handleInputChange
+    } = useForm(initialValues);
+
+    const validate = () => {
+        let temp = {};
+        temp.fullName = values.fullName ? '': 'This field is required';
+        temp.email = /^\w+@[a-zA-Z_]+\.[a-zA-Z]{2,3}$/.test(values.email) ? '' : 'Email is not valid' ;
+        temp.mobile = values.mobile.length > 9 ? '' : 'Minimum 10 numbers required';
+        temp.departmentId = values.departmentId.length != 0 ? '' : 'This field is required';
+
+        setErrors({...temp});
+        return Object.values(temp).every(_=>_ == '');
+    }
+
+    const handleSubmit = (e)=>{
+        e.preventDefault();
+        if(validate())
+            window.alert('Testing...');
+    }
 
     return (
-        <Form>
+        <Form onSubmit={handleSubmit}>
             <Grid container>
                 <Grid item xs={6}>
                     <Controls.Input
                      name='fullName'
                      label='Full Name'
                      value={values.fullName}
-                     onChange={handleInputChange} />
+                     onChange={handleInputChange} 
+                     error={errors.fullName} />
                     <Controls.Input 
                         name='email'
                         label="Email"
                         value={values.email}
-                        onChange={handleInputChange} />
+                        onChange={handleInputChange} 
+                        error={errors.email} />
                     <Controls.Input 
                         name='mobile'
                         label="Mobile"
                         value={values.mobile}
-                        onChange={handleInputChange} />
+                        onChange={handleInputChange}
+                        error={errors.mobile} />
                     <Controls.Input 
                         name='city'
                         label="City"
@@ -64,6 +91,7 @@ export default function EmployeeForm() {
                         value={values.departmentId}
                         onChange={handleInputChange}
                         options={employeeService.getDepartmentCollection()}
+                        error={errors.departmentId}
                      /> 
                      <Controls.DatePicker 
                         label='Hire date'
