@@ -10,11 +10,17 @@ export function useForm(initialValues) {
         setValues({...values, [name]:value});
     }
 
+    const resetForm =()=>{
+        setValues(initialValues);
+        setErrors({});
+    }
+
     return {
         values, 
         setValues, 
         errors,
         setErrors,
+        resetForm,
         handleInputChange};
 }
 

@@ -29,7 +29,8 @@ export default function EmployeeForm() {
         setValues, 
         errors,
         setErrors,
-        handleInputChange
+        resetForm,
+        handleInputChange,
     } = useForm(initialValues);
 
     const validate = () => {
@@ -112,6 +113,7 @@ export default function EmployeeForm() {
                      <Controls.Button 
                         text="Reset"
                         color="default"
+                        onClick={resetForm}
                      />
                 </Grid>
             </Grid>
