@@ -33,7 +33,7 @@ export default function Employees() {
             icon={<PeopleIcon />}
         ></PageHeader>
         <Paper className={classes.pageContent}>
-            <EmployeeForm />
+            {/* <EmployeeForm /> */}
             <TblContainer>
                 <TblHead></TblHead>
                 <TableBody>
