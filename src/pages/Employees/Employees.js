@@ -6,7 +6,8 @@ import { makeStyles, Paper, TableBody, TableCell, TableRow, Toolbar, InputAdornm
 import useTable from '../../components/useTable';
 import * as employeeService from '../../services/employeeService';
 import Controls from '../../components/controls/Controls';
-import { Search } from "@material-ui/icons";
+import { Search as SearchIcon, Add as AddIcon } from "@material-ui/icons";
+import Popup from '../../components/Popup';
 
 const useStyles = makeStyles(theme=>({
     pageContent:{
@@ -15,6 +16,10 @@ const useStyles = makeStyles(theme=>({
     },
     searchInput:{
         width: '75%'
+    },
+    newButton:{
+        position:'absolute',
+        right: '10px'
     }
 }));
 
@@ -29,6 +34,7 @@ export default function Employees() {
     const classes = useStyles();
     const [records, setRecords] = useState(employeeService.getAllEmployees());
     const [filterFn, setFilterFn] = useState({fn:items => items});
+    const [openPopup, setOpenPopup] = useState(false);
 
     const { TblHead, TblContainer, TblPagination, recordsAfterPagingAndSorting } = useTable(records, headCells, filterFn);
 
@@ -41,7 +47,7 @@ export default function Employees() {
             }
         });
     };
-    
+
     return (
         <>
         <PageHeader
@@ -50,17 +56,23 @@ export default function Employees() {
             icon={<PeopleIcon />}
         ></PageHeader>
         <Paper className={classes.pageContent}>
-            {/* <EmployeeForm /> */}
             <Toolbar>
                 <Controls.Input 
                     label="Search employees"
                     className={classes.searchInput}
                     InputProps={{
-                        startAdoinment:(<InputAdornment position="start">
-                            <Search />
+                        startAdornment:(<InputAdornment position="start">
+                            <SearchIcon />
                         </InputAdornment>)
                     }}
                     onChange={handleSearch}
+                />
+                <Controls.Button 
+                    text="Add new"
+                    variant="outlined"
+                    startIcon = {<AddIcon />}
+                    className={classes.newButton}
+                    onClick={()=>setOpenPopup(true)}
                 />
             </Toolbar>
             <TblContainer>
@@ -78,6 +90,9 @@ export default function Employees() {
             </TblContainer>
             <TblPagination></TblPagination>
         </Paper>
+        <Popup title="Employee form" openPopup={openPopup} setOpenPopup={setOpenPopup}>
+            <EmployeeForm />
+        </Popup>
         </>
     )
 }
