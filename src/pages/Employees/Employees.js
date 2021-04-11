@@ -6,7 +6,7 @@ import { makeStyles, Paper, TableBody, TableCell, TableRow, Toolbar, InputAdornm
 import useTable from '../../components/useTable';
 import * as employeeService from '../../services/employeeService';
 import Controls from '../../components/controls/Controls';
-import { Search as SearchIcon, Add as AddIcon } from "@material-ui/icons";
+import { Search as SearchIcon, Add as AddIcon, EditOutlined as EditOutlinedIcon, Close as CloseIcon } from "@material-ui/icons";
 import Popup from '../../components/Popup';
 
 const useStyles = makeStyles(theme=>({
@@ -28,10 +28,12 @@ const headCells = [
     {id:'email'     , label: 'Email'},
     {id:'mobile'    , label: 'Mobile'},
     {id:'department', label: 'Department'},
+    {id:'actions'   , label: 'Actions', disableSorting: true},
 ];
 
 export default function Employees() {
     const classes = useStyles();
+    const [recordForEdit, setRecordForEdit] = useState(null);
     const [records, setRecords] = useState(employeeService.getAllEmployees());
     const [filterFn, setFilterFn] = useState({fn:items => items});
     const [openPopup, setOpenPopup] = useState(false);
@@ -49,10 +51,16 @@ export default function Employees() {
     };
 
     const addOrEdit = (employee, resetForm) => {
-        employeeService.insertEmployee(employee);
+        if(employee.id) employeeService.updateEmployee(employee);
+        else employeeService.insertEmployee(employee);
         resetForm();
         setOpenPopup(false);
         setRecords(employeeService.getAllEmployees());
+    }
+
+    const openInPopup = item =>{
+        setRecordForEdit(item);
+        setOpenPopup(true);
     }
 
     return (
@@ -79,18 +87,29 @@ export default function Employees() {
                     variant="outlined"
                     startIcon = {<AddIcon />}
                     className={classes.newButton}
-                    onClick={()=>setOpenPopup(true)}
+                    onClick={()=>{setOpenPopup(true);setRecordForEdit(null);}}
                 />
             </Toolbar>
             <TblContainer>
                 <TblHead></TblHead>
                 <TableBody>
-                    {recordsAfterPagingAndSorting().map(_=>(
-                        <TableRow key={_.id}>
-                            <TableCell>{_.fullName}</TableCell>
-                            <TableCell>{_.email}</TableCell>
-                            <TableCell>{_.mobile}</TableCell>
-                            <TableCell>{_.department}</TableCell>
+                    {recordsAfterPagingAndSorting().map(item=>(
+                        <TableRow key={item.id}>
+                            <TableCell>{item.fullName}</TableCell>
+                            <TableCell>{item.email}</TableCell>
+                            <TableCell>{item.mobile}</TableCell>
+                            <TableCell>{item.department}</TableCell>
+                            <TableCell>
+                                <Controls.ActionButton
+                                    color="primary"
+                                    onClick={()=>{openInPopup(item)}}>
+                                    <EditOutlinedIcon fontSize="small" />
+                                </Controls.ActionButton>
+                                <Controls.ActionButton
+                                    color="secondary">
+                                    <CloseIcon fontSize="small" />
+                                </Controls.ActionButton>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -98,7 +117,7 @@ export default function Employees() {
             <TblPagination></TblPagination>
         </Paper>
         <Popup title="Employee form" openPopup={openPopup} setOpenPopup={setOpenPopup}>
-            <EmployeeForm addOrEdit={addOrEdit}/>
+            <EmployeeForm recordForEdit={recordForEdit} addOrEdit={addOrEdit}/>
         </Popup>
         </>
     )
