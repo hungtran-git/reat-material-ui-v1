@@ -9,6 +9,7 @@ import Controls from '../../components/controls/Controls';
 import { Search as SearchIcon, Add as AddIcon, EditOutlined as EditOutlinedIcon, Close as CloseIcon } from "@material-ui/icons";
 import Popup from '../../components/Popup';
 import Notification from '../../components/Notification';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme=>({
     pageContent:{
@@ -39,6 +40,7 @@ export default function Employees() {
     const [filterFn, setFilterFn] = useState({fn:items => items});
     const [openPopup, setOpenPopup] = useState(false);
     const [notify, setNotify] = useState({isOpen:false, message:'', type:''});
+    const [confirmDialog, setConfirmDialog] = useState({isOpen:false, title:'', subTitle:''})
 
     const { TblHead, TblContainer, TblPagination, recordsAfterPagingAndSorting } = useTable(records, headCells, filterFn);
 
@@ -71,15 +73,14 @@ export default function Employees() {
     }
 
     const onDelete = id=>{
-        if(window.confirm('Are you sure to delete this record?')){
-            employeeService.deleteEmployee(id);
-            setRecords(employeeService.getAllEmployees());
-            setNotify({
-                isOpen: true,
-                message:'Deleted successfully',
-                type:'success'
-            });
-        }
+        employeeService.deleteEmployee(id);
+        setRecords(employeeService.getAllEmployees());
+        setNotify({
+            isOpen: true,
+            message:'Deleted successfully',
+            type:'success'
+        });
+        setConfirmDialog({isOpen: false});
     }
 
     return (
@@ -126,7 +127,15 @@ export default function Employees() {
                                 </Controls.ActionButton>
                                 <Controls.ActionButton
                                     color="secondary"
-                                    onClick={()=>onDelete(item.id)}>
+                                    onClick={()=>{
+                                        setConfirmDialog({
+                                            isOpen:true, 
+                                            title:'Are you sure delete this record', 
+                                            subTitle:`You can's undo this operation`,
+                                            onConfirm:()=>onDelete(item.id)
+                                        });
+                                        
+                                    }}>
                                     <CloseIcon fontSize="small" />
                                 </Controls.ActionButton>
                             </TableCell>
@@ -142,6 +151,10 @@ export default function Employees() {
         <Notification 
             notify={notify}
             setNotify={setNotify}
+        />
+        <ConfirmDialog 
+            confirmDialog={confirmDialog}
+            setConfirmDialog={setConfirmDialog}
         />
         </>
     )
